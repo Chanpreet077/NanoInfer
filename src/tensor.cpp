@@ -1,4 +1,5 @@
 #include "tensor.h"
+#include <stdexcept>
 
 #include <iostream>
 
@@ -80,6 +81,15 @@ Tensor Tensor::matmul(const Tensor& other) const
     }
 
     return result;
+}
+
+void Tensor::loadData(const std::vector<float>& values)
+{
+    if (values.size() != data_.size()) {
+        throw std::runtime_error("Data size does not match tensor size");
+    }
+
+    data_ = values;
 }
 
 void Tensor::print() const
