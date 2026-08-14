@@ -20,6 +20,11 @@ public:
     const float& operator[](size_t index) const;
 
     void print() const;
+    float& at(size_t row, size_t col);
+    const float& at(size_t row, size_t col) const;
+    Tensor add(const Tensor& other) const;
+    Tensor multiply(float scalar) const;
+    Tensor matmul(const Tensor& other) const;
 };
 
 #endif
