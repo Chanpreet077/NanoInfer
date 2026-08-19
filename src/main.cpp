@@ -1,65 +1,39 @@
-#include "tensor.h"
-#include "linear.h"
-#include "relu.h"
-#include "softmax.h"
-
+#include "model.h"
 #include <iostream>
 
 int main()
 {
-    Tensor input({1, 2});
+    Model model;
 
-    input.at(0, 0) = 2;
-    input.at(0, 1) = -3;
+    model.load("models/xor_weights.txt");
 
-    // First layer: 2 inputs -> 3 hidden values
+    float testInputs[4][2] = {
+        {0, 0},
+        {0, 1},
+        {1, 0},
+        {1, 1}
+    };
 
-    Linear layer1(2, 3);
+    for (int i = 0; i < 4; i++) {
+        Tensor input({1, 2});
 
-    layer1.weights().loadData({
-        1, -2, 3,
-        4,  1, -1
-    });
+        input.at(0, 0) = testInputs[i][0];
+        input.at(0, 1) = testInputs[i][1];
 
-    layer1.bias().loadData({
-        0, 0, 0
-    });
+        Tensor probabilities = model.forward(input);
 
-    ReLU relu;
+        int predictedClass =
+            probabilities[0] > probabilities[1] ? 0 : 1;
 
-    // Second layer: 3 hidden values -> 2 outputs
-    Linear layer2(3, 2);
-
-    layer2.weights().loadData({
-        1,  2,
-        -1,  1,
-        2, -1
-    });
-
-    layer2.bias().loadData({
-        1, 1
-    });
-
-
-    Tensor hidden = layer1.forward(input);
-    Tensor activated = relu.forward(hidden);
-    Tensor output = layer2.forward(activated);
-    Softmax softmax;
-
-    Tensor probabilities = softmax.forward(output);
-    
-    std::cout << "Hidden: ";
-    hidden.print();
-
-    std::cout << "After ReLU: ";
-    activated.print();
-
-
-    std::cout << "Final output: ";
-    output.print();
-
-    std::cout << "Probabilities: ";
-    probabilities.print();
+        std::cout
+            << "Input: ["
+            << testInputs[i][0]
+            << ", "
+            << testInputs[i][1]
+            << "] -> Prediction: "
+            << predictedClass
+            << std::endl;
+    }
 
     return 0;
 }
