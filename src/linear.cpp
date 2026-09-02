@@ -16,7 +16,7 @@ Tensor& Linear::bias()
     return bias_;
 }
 
-Tensor Linear::forward(const Tensor& input) const
+Tensor Linear::forward(const Tensor& input) const //output = input x weight + bias calc
 {
     Tensor output = input.matmul(weights_);
 

@@ -3,15 +3,16 @@
 
 #include <vector>
 
+
 Model::Model()
-    : layer1_(2, 4),
-      layer2_(4, 2)
+    : layer1_(784, 128),
+      layer2_(128, 10)
 {
 }
-
-void Model::load(const std::string& filename)
+/*
+void Model::load(const std::string& filename) OLDDDDDD
 {
-    std::vector<float> values = loadWeights(filename, 22);
+    std::vector<float> values = loadWeights(filename, 101770);
 
     layer1_.weights().loadData({
         values[0], values[1],
@@ -38,6 +39,50 @@ void Model::load(const std::string& filename)
         values[20],
         values[21]
     });
+}
+    */
+
+void Model::load(const std::string& filename)
+{
+    std::vector<float> values = loadWeights(filename, 101770);
+
+    size_t index = 0;
+
+    // Layer 1 weights: 784 x 128 = 100352 values
+    std::vector<float> layer1Weights(
+        values.begin() + index,
+        values.begin() + index + 100352
+    );
+
+    index += 100352;
+
+    // Layer 1 bias: 128 values
+    std::vector<float> layer1Bias(
+        values.begin() + index,
+        values.begin() + index + 128
+    );
+
+    index += 128;
+
+    // Layer 2 weights: 128 x 10 = 1280 values
+    std::vector<float> layer2Weights(
+        values.begin() + index,
+        values.begin() + index + 1280
+    );
+
+    index += 1280;
+
+    // Layer 2 bias: 10 values
+    std::vector<float> layer2Bias(
+        values.begin() + index,
+        values.begin() + index + 10
+    );
+
+    layer1_.weights().loadData(layer1Weights);
+    layer1_.bias().loadData(layer1Bias);
+
+    layer2_.weights().loadData(layer2Weights);
+    layer2_.bias().loadData(layer2Bias);
 }
 
 Tensor Model::forward(const Tensor& input) const

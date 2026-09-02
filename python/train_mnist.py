@@ -104,3 +104,71 @@ with torch.no_grad():
 accuracy = correct / total
 
 print(f"Test accuracy: {accuracy * 100:.2f}%")
+
+# -----------------------------
+# Export model weights
+# -----------------------------
+
+with open("models/mnist_weights.txt", "w") as f:
+
+    # PyTorch stores Linear weights as:
+    # [output_features, input_features]
+    #
+    # NanoInfer expects:
+    # [input_features, output_features]
+    #
+    # So transpose them before exporting.
+
+    layer1_weights = model.layer1.weight.detach().t().flatten()
+    layer1_bias = model.layer1.bias.detach().flatten()
+
+    layer2_weights = model.layer2.weight.detach().t().flatten()
+    layer2_bias = model.layer2.bias.detach().flatten()
+
+    for value in layer1_weights:
+        f.write(f"{value.item()} ")
+
+    f.write("\n")
+
+    for value in layer1_bias:
+        f.write(f"{value.item()} ")
+
+    f.write("\n")
+
+    for value in layer2_weights:
+        f.write(f"{value.item()} ")
+
+    f.write("\n")
+
+    for value in layer2_bias:
+        f.write(f"{value.item()} ")
+
+print("MNIST weights exported to models/mnist_weights.txt")
+
+
+# -----------------------------
+# Export one test image
+# -----------------------------
+
+test_image, test_label = test_dataset[0]
+
+# Convert 28x28 image into 784 values
+flat_image = test_image.view(-1)
+
+with open("models/mnist_test_image.txt", "w") as f:
+    for value in flat_image:
+        f.write(f"{value.item()} ")
+
+print("Test image exported to models/mnist_test_image.txt")
+print("Actual digit:", test_label)
+
+
+# Check what PyTorch predicts for that exact image
+model.eval()
+
+with torch.no_grad():
+    output = model(test_image.unsqueeze(0))
+
+    prediction = torch.argmax(output, dim=1).item()
+
+print("PyTorch prediction:", prediction)

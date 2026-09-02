@@ -1,39 +1,41 @@
 #include "model.h"
+#include "model_loader.h"
+
 #include <iostream>
+#include <vector>
 
 int main()
 {
     Model model;
 
-    model.load("models/xor_weights.txt");
+    model.load("models/mnist_weights.txt");
 
-    float testInputs[4][2] = {
-        {0, 0},
-        {0, 1},
-        {1, 0},
-        {1, 1}
-    };
+    // Load the 784 pixel values from the exported MNIST test image
+    std::vector<float> imageValues =
+        loadWeights("models/mnist_test_image.txt", 784);
 
-    for (int i = 0; i < 4; i++) {
-        Tensor input({1, 2});
+    Tensor input({1, 784});
+    input.loadData(imageValues);
 
-        input.at(0, 0) = testInputs[i][0];
-        input.at(0, 1) = testInputs[i][1];
+    // Run inference through NanoInfer
+    Tensor probabilities = model.forward(input);
 
-        Tensor probabilities = model.forward(input);
+    int predictedClass = 0;
+    float highestProbability = probabilities[0];
 
-        int predictedClass =
-            probabilities[0] > probabilities[1] ? 0 : 1;
-
-        std::cout
-            << "Input: ["
-            << testInputs[i][0]
-            << ", "
-            << testInputs[i][1]
-            << "] -> Prediction: "
-            << predictedClass
-            << std::endl;
+    for (int i = 1; i < 10; i++) {
+        if (probabilities[i] > highestProbability) {
+            highestProbability = probabilities[i];
+            predictedClass = i;
+        }
     }
+
+    std::cout << "NanoInfer prediction: "
+              << predictedClass
+              << std::endl;
+
+    std::cout << "Probabilities: ";
+    probabilities.print();
 
     return 0;
 }
