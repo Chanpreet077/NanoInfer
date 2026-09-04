@@ -10,7 +10,7 @@ Model::Model()
 {
 }
 /*
-void Model::load(const std::string& filename) OLDDDDDD
+void Model::load(const std::string& filename) OLDDDDDD //manually loading weights + biases
 {
     std::vector<float> values = loadWeights(filename, 101770);
 
