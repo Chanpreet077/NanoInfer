@@ -3,7 +3,7 @@
 #include <fstream>
 #include <stdexcept>
 
-std::vector<float> loadWeights(
+std::vector<float> loadWeights(  //returns all weights + biases from file as one large vector called values
     const std::string& filename,
     size_t count
 )

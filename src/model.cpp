@@ -83,13 +83,26 @@ void Model::load(const std::string& filename)
 
     layer2_.weights().loadData(layer2Weights);
     layer2_.bias().loadData(layer2Bias);
+
+    // Create INT8 copies of the weights after FP32 weights are loaded
+    layer1_.quantizeWeights();
+    layer2_.quantizeWeights();
 }
 
-Tensor Model::forward(const Tensor& input) const
+Tensor Model::forward(
+    const Tensor& input,
+    bool useCuda,
+    bool useInt8
+) const
 {
-    Tensor hidden = layer1_.forward(input);
-    Tensor activated = relu_.forward(hidden);
-    Tensor output = layer2_.forward(activated);
+    Tensor hidden =
+        layer1_.forward(input, useCuda, useInt8);
+
+    Tensor activated =
+        relu_.forward(hidden);
+
+    Tensor output =
+        layer2_.forward(activated, useCuda, useInt8);
 
     return softmax_.forward(output);
 }

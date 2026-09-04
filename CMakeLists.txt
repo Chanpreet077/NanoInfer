@@ -9,4 +9,9 @@ include_directories(include)
 add_executable(nanoinfer
     src/main.cpp
     src/tensor.cpp
+    src/linear.cpp
+    src/relu.cpp
+    src/softmax.cpp
+    src/model.cpp
+    src/model_loader.cpp
 )

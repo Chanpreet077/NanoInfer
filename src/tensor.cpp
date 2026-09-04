@@ -118,3 +118,13 @@ const float& Tensor::at(size_t row, size_t col) const
 
     return data_[index];
 }
+
+float* Tensor::data()
+{
+    return data_.data();
+}
+
+const float* Tensor::data() const
+{
+    return data_.data();
+}

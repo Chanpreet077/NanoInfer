@@ -26,6 +26,9 @@ public:
     Tensor multiply(float scalar) const;
     Tensor matmul(const Tensor& other) const;
     void loadData(const std::vector<float>& values);
+
+    float* data();
+    const float* data() const;
 };
 
 #endif

@@ -19,8 +19,8 @@ public:
     Model();
 
     void load(const std::string& filename);
-
-    Tensor forward(const Tensor& input) const;
+    
+    Tensor forward(const Tensor& input, bool useCuda = false, bool useInt8 = false) const;
 };
 
 #endif
